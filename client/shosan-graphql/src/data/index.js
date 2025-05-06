@@ -8,6 +8,12 @@ export const flexCenter = {
     justifyContent: "center", 
     alignItems: "center"
 }
+export const flexBetween = {
+    display: "flex", 
+    flexDirection: "row", 
+    justifyContent: "space-between", 
+    alignItems: "center"
+}
 export const flexColCenter = {
     display: "flex", 
     flexDirection: "column", 
@@ -60,6 +66,17 @@ export const GET_USER_BY_ID = gql`
 export const CREATE_USERS = gql`
     mutation CreateUser($name: String!, $age: Int!, $isMarried: Boolean!) {
         createUser(name: $name, age: $age, isMarried: $isMarried) {
+            id
+            name 
+            age
+            isMarried
+        }
+    }
+`
+
+export const UPDATE_USER = gql`
+    mutation UpdateUser($id: ID!, $name: String!, $age: Int!, $isMarried: Boolean!) {
+        updateUser(id: $id, name: $name, age: $age, isMarried: $isMarried) {
             id
             name 
             age

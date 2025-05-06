@@ -19,6 +19,7 @@ const typeDefs = `
 
     type Mutation {
         createUser(name: String!, age: Int!, isMarried: Boolean!): User
+        updateUser(id: ID!, name: String!, age: Int!, isMarried: Boolean!): User
     }
 
     type User {
@@ -51,10 +52,28 @@ const resolvers = {
             users.push(newUsers);
             return newUsers;
         },
+        updateUser: (parent, args) => {
+            const { id, name, age, isMarried } = args;
+            const user = users.find(user => user.id === id);
+
+            if (!user) return null;
+
+            if (name !== undefined) user.name = name;
+            if (age !== undefined) user.age = age;
+            if (isMarried !== undefined) user.isMarried = isMarried;
+
+            return user;
+        }
     }
 }
 
-const server = new ApolloServer({ typeDefs, resolvers }); 
+const server = new ApolloServer({ 
+    typeDefs, 
+    resolvers, 
+    formatError: (error) => {
+        console.error("GraphQL Error:", error);
+        return error;
+    }, }); 
 
 const { url } = await startStandaloneServer(server, {
     listen: { port: 4000 },
