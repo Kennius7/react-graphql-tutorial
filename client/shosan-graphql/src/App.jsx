@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { 
-  flexColCenter, flexColStart, GET_USERS, GET_USER_BY_ID, 
+  flexColCenter, flexColStart, GET_USERS, GET_USER_BY_ID, DELETE_USER_BY_ID,
   CREATE_USERS, flexCenter, flexAroundStart, flexBetween, UPDATE_USER 
 } from './data';
 
@@ -28,6 +28,7 @@ function App() {
 
   const [ createUser ] = useMutation(CREATE_USERS);
   const [ updateUser ] = useMutation(UPDATE_USER);
+  const [ deleteUser ] = useMutation(DELETE_USER_BY_ID);
 
   const handleSelect = (id) => setIdData(id);
   const handleChange = (e) => setUserData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -54,6 +55,16 @@ function App() {
       });
       console.log("Updated data:", updateUserData);
       // window.location.reload();
+    }
+  }
+
+  const handleDelete = async (id) => {
+    console.log("Deleting...");
+    try {
+      await deleteUser({ variables: { id } });
+      window.location.reload();
+    } catch (err) {
+      console.error("Delete failed:", err.message);
     }
   }
 
@@ -131,33 +142,51 @@ function App() {
                     />
                 </label>
 
-                {
-                  clickedEdit === user.id 
-                  ? (
-                      <label 
-                        style={{ 
-                          ...flexCenter,
-                          fontSize: 20, 
-                          fontWeight: "500", 
-                          fontStyle: "italic", 
-                          marginBottom: "10px",
-                        }}
-                      >
-                        Married? 
-                        <input 
-                          type="checkbox"
-                          name="isMarried"
-                          checked={updateUserData.isMarried}
-                          onChange={(e) => setUpdateUserData(prev => ({ ...prev, isMarried: e.target.checked }))}
-                          style={{ width: "20px", height: "20px", marginLeft: "15px" }}
-                        />
-                      </label>
-                  ) : (
-                    <div style={{ fontSize: 20, fontWeight: "500", fontStyle: "italic", marginBottom: "10px" }}>
-                      Married: {user.isMarried ? 'Yes' : 'No'}
-                    </div>
-                  )
-                }
+                <div style={{ ...flexBetween, width: "100%" }}>
+                  {
+                    clickedEdit === user.id 
+                    ? (
+                        <label 
+                          style={{ 
+                            ...flexCenter,
+                            fontSize: 20, 
+                            fontWeight: "500", 
+                            fontStyle: "italic", 
+                            marginBottom: "10px",
+                          }}
+                        >
+                          Married? 
+                          <input 
+                            type="checkbox"
+                            name="isMarried"
+                            checked={updateUserData.isMarried}
+                            onChange={(e) => setUpdateUserData(prev => ({ ...prev, isMarried: e.target.checked }))}
+                            style={{ width: "20px", height: "20px", marginLeft: "15px" }}
+                          />
+                        </label>
+                    ) : (
+                      <div style={{ fontSize: 20, fontWeight: "500", fontStyle: "italic", marginBottom: "10px" }}>
+                        Married: {user.isMarried ? 'Yes' : 'No'}
+                      </div>
+                    )
+                  }
+                  <div 
+                    onClick={() => handleDelete(user.id)}
+                    style={{ 
+                      fontSize: 12, 
+                      fontStyle: "italic", 
+                      backgroundColor: "#571108", 
+                      color: "white",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      paddingBottom: "2px",
+                      paddingTop: "2px",
+                      paddingLeft: "8px",
+                      paddingRight: "8px",
+                    }}>
+                    Delete?
+                  </div>
+                </div>
               </button>
             ))
           }

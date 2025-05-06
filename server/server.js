@@ -20,6 +20,7 @@ const typeDefs = `
     type Mutation {
         createUser(name: String!, age: Int!, isMarried: Boolean!): User
         updateUser(id: ID!, name: String!, age: Int!, isMarried: Boolean!): User
+        deleteUser(id: ID!): User
     }
 
     type User {
@@ -63,6 +64,14 @@ const resolvers = {
             if (isMarried !== undefined) user.isMarried = isMarried;
 
             return user;
+        },
+        deleteUser: (parent, args) => {
+            const id = args.id;
+            const index = users.findIndex(user => user.id === id);
+            if (index === -1) return null;
+            const deletedUser = users[index];
+            users.splice(index, 1);
+            return deletedUser;
         }
     }
 }
